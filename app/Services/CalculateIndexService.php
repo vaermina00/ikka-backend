@@ -44,22 +44,37 @@ class CalculateIndexService
     public function generatePengiraanIndeks($requestBody): void
     {
         try {
+            $db = \Config\Database::connect();
             // $this->db->transBegin();
+            
+            $indeksBank = $this->indeksBankModel->getIndeksBank($requestBody['base_tahun'], $requestBody['base_penggal']);
 
-            $this->calculatePeratusIndikator();
-            $this->calculatePurataSisihanPiawaiIndikator();
-            $this->calculateZscore();
-            $this->calculateIndeksIndikator();
-            $this->calculateIndeksAsas($requestBody['base_tahun'], $requestBody['base_penggal']);
-            $this->calculateIndeksKomponen();
-            $this->calculateIndeksTeras();
-            $this->calculateIndeksTahun();
+            if (empty($indeksBank)) {
+                // calculate indexes
+                $this->calculatePeratusIndikator();
+                $this->calculatePurataSisihanPiawaiIndikator();
+                $this->calculateZscore();
+                $this->calculateIndeksIndikator();
+                $this->calculateIndeksAsas($requestBody['base_tahun'], $requestBody['base_penggal']);
+                $this->calculateIndeksKomponen();
+                $this->calculateIndeksTeras();
+                $this->calculateIndeksTahun();
 
-            // Compile final JSONB into indeks_bank table
-            $this->indeksBankModel->compileAndInsertIndeksBank();
+                // Compile final JSONB into indeks_bank table
+                $generateIndeksBank = $this->indeksBankModel->generateIndeksBank($requestBody['base_tahun'], $requestBody['base_penggal']);
+
+                if ($generateIndeksBank) {
+                    $db->table('indeks_asas')->truncate();
+                    $db->table('indeks_indikator')->truncate();
+                    $db->table('indeks_komponen')->truncate();
+                    $db->table('indeks_tahun')->truncate();
+                    $db->table('indeks_teras')->truncate();
+                    $db->table('indeks_zscore')->truncate();
+                }
+            }
 
             // $this->db->transCommit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // $this->db->transRollback();
             log_message('error', 'Error in generatePengiraanIndeks: ' . $e->getMessage());
             throw $e;

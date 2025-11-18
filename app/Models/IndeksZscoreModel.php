@@ -37,7 +37,7 @@ class IndeksZscoreModel extends Model
             LEFT JOIN indeks_zscore iz
                 ON iz.id_indikator = i.id_indikator
                 AND iz.id_pengumpulandata = p.id_pengumpulandata
-            WHERE iz.id_indeksindikator IS null
+            WHERE iz.id_indekszscore IS null
             ORDER BY 
                 i.id_indikator, p.id_pengumpulandata
         ";

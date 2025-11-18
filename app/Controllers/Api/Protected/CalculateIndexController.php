@@ -1,4 +1,6 @@
-<?php namespace App\Controllers\Api\Protected;
+<?php 
+
+namespace App\Controllers\Api\Protected;
 
 use CodeIgniter\RESTful\ResourceController;
 use App\Services\CalculateIndexService;
