@@ -96,10 +96,10 @@ class AuthenticationService
         ];
     }
 
-    public function retrieveUserIndikator(string $username, string $jenis): array
+    public function retrieveUserIndikator(string $username, string $jenis, int $tahun, int $penggal): array
     {
         // retrieve user data
-        $userIndikator = $this->penggunaModel->getUserIndikator($username, $jenis);
+        $userIndikator = $this->penggunaModel->getUserIndikator($username, $jenis, $tahun, $penggal);
 
         // indikator assigned
         if (empty($userIndikator)) {
@@ -139,7 +139,8 @@ class AuthenticationService
                 'nama_indikator'     => $row['nama_indikator'],
                 'impak_indikator'    => $row['impak_indikator'],
                 'pemberat_indikator' => $row['pemberat_indikator'],
-                'status_indikator'   => $row['status_indikator']
+                'status_indikator'   => $row['status_indikator'],
+                'nilai'              => $row['nilai']
             ];
         }
 

@@ -54,15 +54,17 @@ class AuthenticationController extends ResourceController
     {
         $username = $this->request->getGet('username');
         $jenis    = $this->request->getGet('jenis');
+        $tahun    = $this->request->getGet('tahun');
+        $penggal  = $this->request->getGet('penggal');
 
         // Validate parameter
-        if (!isset($username) || !isset($jenis)) 
+        if (!isset($username) || !isset($jenis) || !isset($tahun) || !isset($penggal)) 
         {
-            return $this->failValidationErrors('Missing username or jenis');
+            return $this->failValidationErrors('Missing username, jenis, tahun or penggal');
         }
 
         // Call retrieveUserData service
-        $result = $this->authenticationService->retrieveUserIndikator($username, $jenis);
+        $result = $this->authenticationService->retrieveUserIndikator($username, $jenis, $tahun, $penggal);
 
         // Service returns staus = true/false
         if ($result['status'] === false) {
