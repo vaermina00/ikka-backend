@@ -28,7 +28,7 @@ class PenggunaModel extends Model
         $db = \Config\Database::connect();
 
         $sql = "
-            select t.nama_teras, k.nama_komponen, i.kod_indikator, i.nama_indikator, i.impak_indikator, i.pemberat_indikator, i.status_indikator, pi2.nilai
+            select t.nama_teras, k.nama_komponen, i.kod_indikator, i.nama_indikator, i.impak_indikator, i.pemberat_indikator, i.status_indikator, pi2.nilai, t.id_teras, k.id_komponen, i.id_indikator, pi2.id_tetapan
             from pengguna p
             left join komponen k on k.id_agensi = p.id_agensi and k.id_jabatan = p.id_jabatan
             inner join indikator i on i.id_komponen = k.id_komponen

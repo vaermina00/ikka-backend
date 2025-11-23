@@ -41,6 +41,34 @@ class CalculateIndexService
         $this->indeksBankModel = new IndeksBankModel();
     }
 
+    public function generateIndikatorCsv(): array
+    {
+        $data = $this->indikatorModel->getIndikatorCsv();
+
+        return $data;
+    }
+
+    public function calculateIndikator()
+    {
+        try {
+            // $this->db->transBegin();
+
+            // calculate indexes
+            $this->calculatePeratusIndikator();
+            $this->calculatePurataSisihanPiawaiIndikator();
+            
+            // $this->db->transCommit();
+            return [
+                'status' => true,
+                'message' => 'Pengiraan indeks berjaya dijana.'
+            ];
+        } catch (Exception $e) {
+            // $this->db->transRollback();
+            log_message('error', 'Error in generatePengiraanIndeksIndikator: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function generatePengiraanIndeks($requestBody): void
     {
         try {
@@ -51,8 +79,6 @@ class CalculateIndexService
 
             if (empty($indeksBank)) {
                 // calculate indexes
-                $this->calculatePeratusIndikator();
-                $this->calculatePurataSisihanPiawaiIndikator();
                 $this->calculateZscore();
                 $this->calculateIndeksIndikator();
                 $this->calculateIndeksAsas($requestBody['base_tahun'], $requestBody['base_penggal']);
@@ -139,7 +165,7 @@ class CalculateIndexService
                 }
             }
         } catch (Exception $e) {
-            log_message('error', 'Error in checkKomponenZscore: ' . $e->getMessage());
+            log_message('error', 'Error in calculatePurataSisihanPiawaiIndikator: ' . $e->getMessage());
             throw $e;
         }
     }

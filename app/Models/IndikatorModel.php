@@ -50,4 +50,19 @@ class IndikatorModel extends Model
                         ->get()
                         ->getResultArray();
     }
+
+    public function getIndikatorCsv(): array
+    {
+        $db = \Config\Database::connect();
+
+        $sql = "
+            select t.nama_teras, k.nama_komponen, i.nama_indikator, i.impak_indikator, i.pemberat_indikator, i.status_indikator, i.peratusan_indikator, i.nilai_purata, i.nilai_sisihanpiawai
+            from indikator i 
+            left join komponen k on k.id_komponen = i.id_komponen
+            left join teras t on t.id_teras = i.id_teras 
+            order by i.id_indikator
+        ";
+
+        return $db->query($sql)->getResultArray();
+    }
 }

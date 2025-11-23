@@ -140,7 +140,11 @@ class AuthenticationService
                 'impak_indikator'    => $row['impak_indikator'],
                 'pemberat_indikator' => $row['pemberat_indikator'],
                 'status_indikator'   => $row['status_indikator'],
-                'nilai'              => $row['nilai']
+                'nilai'              => $row['nilai'],
+                'id_teras'           => $row['id_teras'],
+                'id_komponen'        => $row['id_komponen'],
+                'id_indikator'       => $row['id_indikator'],
+                'id_tetapan'         => $row['id_tetapan']
             ];
         }
 

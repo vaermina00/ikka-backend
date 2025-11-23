@@ -8,7 +8,7 @@ class PengumpulandataIndikatorModel extends Model
 {
     protected $table = 'pengumpulandata_indikator';
     protected $primaryKey = 'id_tetapan';
-    protected $allowedFields = [];
+    protected $allowedFields = ['nilai'];
 
     public function getDataByKodIndikator(string $kodIndikator): array
     {

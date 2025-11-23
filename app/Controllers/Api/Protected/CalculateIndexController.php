@@ -15,6 +15,42 @@ class CalculateIndexController extends ResourceController
         $this->calculateIndexService = new CalculateIndexService();
     }
 
+    public function generateIndikatorCsv()
+    {
+        $data = $this->calculateIndexService->generateIndikatorCsv();
+
+        if ($data['status']) {
+            return $this->response->setJSON([
+                'status' => 'success',
+                'message' => $data['message']
+            ]);
+        } else {
+            return $this->response->setStatusCode(500)->setJSON([
+                'status' => 'error',
+                'message' => $data['message'],
+                'error' => $data['error']
+            ]);
+        }
+    }
+
+    public function calculateIndikator()
+    {
+        $data = $this->calculateIndexService->calculateIndikator();
+
+        if ($data['status']) {
+            return $this->response->setJSON([
+                'status' => 'success',
+                'message' => $data['message']
+            ]);
+        } else {
+            return $this->response->setStatusCode(500)->setJSON([
+                'status' => 'error',
+                'message' => $data['message'],
+                'error' => $data['error']
+            ]);
+        }
+    }
+
     public function peratusKomponen()
     {
         try {

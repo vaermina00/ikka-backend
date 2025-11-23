@@ -18,34 +18,33 @@ $routes->group('ikka-be-dashboard', ['namespace' => 'App\Controllers\Api\Protect
 $routes->get('testDB', 'TestDB::testDB');
 $routes->get('listDB', 'TestDB::listDB');
 
-// calculate index
-// $routes->group('', ['namespace' => 'App\Controllers\Api\Protected'], function($routes) {
-//     $routes->post('postLogin', 'AuthenticationController::userLogin');
-// });
-
-// calculate index
-$routes->group('', ['namespace' => 'App\Controllers\Api\Protected'], function($routes) {
-    $routes->get('getSumPemberat', 'CalculateIndexController::sumPemberat');
-    $routes->get('getPeratusKomponen', 'CalculateIndexController::peratusKomponen');
-    $routes->post('postCalculatePengiraanIndeks', 'CalculateIndexController::calculatePengiraanIndeks');
-});
-
 $routes->group('', ['filter' => 'cors'], static function (RouteCollection $routes) {
-    $routes->post('postLogin', 'Api\Protected\AuthenticationController::userLogin');
-    $routes->options('postLogin', static function () {
-        $response = response();
-        $response->setStatusCode(204);
-        $response->setHeader('Allow', 'OPTIONS, POST');
-        return $response;
+    $routes->get('getSumPemberat', 'Api\Protected\CalculateIndexController::sumPemberat');
+    $routes->get('getPeratusKomponen', 'Api\Protected\CalculateIndexController::peratusKomponen');
+    $routes->get('getIndikatorCsv', 'Api\Protected\CalculateIndexController::generateIndikatorCsv');
+    $routes->post('postCalculateIndikatorIndeks', 'Api\Protected\CalculateIndexController::calculateIndikator');
+    $routes->post('postCalculatePengiraanIndeks', 'Api\Protected\CalculateIndexController::calculatePengiraanIndeks');
+
+    $routes->options('(:any)', static function ($any) {
+        $response = service('response');
+        return $response->setStatusCode(204)
+                        ->setHeader('Access-Control-Allow-Origin', 'http://localhost')
+                        ->setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+                        ->setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
     });
 });
 
 $routes->group('', ['filter' => 'cors'], static function (RouteCollection $routes) {
+
+    $routes->post('postLogin', 'Api\Protected\AuthenticationController::userLogin');
     $routes->get('getUserIndikator', 'Api\Protected\AuthenticationController::loadUserIndikator');
-    $routes->options('getUserIndikator', static function () {
-        $response = response();
-        $response->setStatusCode(204);
-        $response->setHeader('Allow', 'OPTIONS, GET');
-        return $response;
+    $routes->put('putDataEntryNilai', 'Api\Protected\DataEntryController::updateDataEntryNilai');
+
+    $routes->options('(:any)', static function ($any) {
+        $response = service('response');
+        return $response->setStatusCode(204)
+                        ->setHeader('Access-Control-Allow-Origin', 'http://localhost')
+                        ->setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+                        ->setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
     });
 });
