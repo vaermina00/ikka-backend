@@ -21,9 +21,10 @@ $routes->get('listDB', 'TestDB::listDB');
 $routes->group('', ['filter' => 'cors'], static function (RouteCollection $routes) {
     $routes->get('getSumPemberat', 'Api\Protected\CalculateIndexController::sumPemberat');
     $routes->get('getPeratusKomponen', 'Api\Protected\CalculateIndexController::peratusKomponen');
-    $routes->get('getIndikatorCsv', 'Api\Protected\CalculateIndexController::generateIndikatorCsv');
     $routes->post('postCalculateIndikatorIndeks', 'Api\Protected\CalculateIndexController::calculateIndikator');
     $routes->post('postCalculatePengiraanIndeks', 'Api\Protected\CalculateIndexController::calculatePengiraanIndeks');
+    $routes->get('downloadIndikatorCsv', 'Api\Protected\CalculateIndexController::downloadIndikatorCsv');
+    $routes->get('downloadIndeksCsv', 'Api\Protected\CalculateIndexController::downloadIndeksCsv');
 
     $routes->options('(:any)', static function ($any) {
         $response = service('response');

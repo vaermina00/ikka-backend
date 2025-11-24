@@ -41,6 +41,27 @@ class CalculateIndexService
         $this->indeksBankModel = new IndeksBankModel();
     }
 
+    public function generateIndeksCsv($parameter)
+    {
+        $indeksBank = $this->indeksBankModel->getIndeksBank($parameter['base_tahun'], $parameter['base_penggal']);
+
+        if (!empty($indeksBank)) {
+            $data = $this->indeksBankModel->getIndeksCsv($parameter['base_tahun'], $parameter['base_penggal']);
+            
+            return [
+                'status' => true,
+                'message' => 'Pengiraan indeks berjaya dijana.',
+                'data' => $data
+            ];
+        } else {
+            return [
+                'status' => false,
+                'message' => 'Data pengiraan indeks tidak wujud.',
+                'error' => 'Data pengiraan indeks tidak wujud.'
+            ];
+        }
+    }
+
     public function generateIndikatorCsv(): array
     {
         $data = $this->indikatorModel->getIndikatorCsv();
@@ -60,7 +81,7 @@ class CalculateIndexService
             // $this->db->transCommit();
             return [
                 'status' => true,
-                'message' => 'Pengiraan indeks berjaya dijana.'
+                'message' => 'Pengiraan indikator berjaya dijana.'
             ];
         } catch (Exception $e) {
             // $this->db->transRollback();
@@ -69,7 +90,7 @@ class CalculateIndexService
         }
     }
 
-    public function generatePengiraanIndeks($requestBody): void
+    public function generatePengiraanIndeks($requestBody)
     {
         try {
             $db = \Config\Database::connect();
@@ -97,8 +118,17 @@ class CalculateIndexService
                     $db->table('indeks_teras')->truncate();
                     $db->table('indeks_zscore')->truncate();
                 }
+                return [
+                    'status' => true,
+                    'message' => 'Pengiraan indeks berjaya dijana.'
+                ];
             }
-
+            else {
+                return [
+                    'status' => true,
+                    'message' => 'Indeks bank untuk tahun dan penggal asas yang dipilih sudah wujud.'
+                ];
+            }
             // $this->db->transCommit();
         } catch (Exception $e) {
             // $this->db->transRollback();

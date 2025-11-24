@@ -12,10 +12,37 @@ class IndeksBankModel extends Model
         'id_pengumpulandata',
         'nilai_indeks',
         'tarikh_cipta',
-        'tahun_pengumpulandata',
-        'penggal_pengumpulandata',
+        'base_tahun',
+        'base_penggal',
         'tarikh_validasi'
     ];
+
+    public function getIndeksCsv($base_tahun, $base_penggal): array
+    {
+        switch ($base_penggal) {
+            case "Jun":
+                $penggal = 1;
+                break;
+            case "Dec":
+                $penggal = 2;
+                break;
+            default:
+                break;
+        }
+
+        $builder = $this->db->table('indeks_bank');
+
+        $builder->select('id_indeksbank, nilai_indeks, tarikh_cipta, base_tahun, base_penggal, tarikh_validasi');
+        $builder->where('base_tahun', $base_tahun);
+        $builder->where('base_penggal', $penggal);
+        $query = $builder->get();
+
+        if ($query === false) {
+            throw new \Exception('Query failed in getIndeksCsv()');
+        }
+
+        return $query->getResultArray();
+    }
 
     public function getIndeksBank($base_tahun, $base_penggal): array
     {
@@ -51,12 +78,12 @@ class IndeksBankModel extends Model
 
         // 1. Get indikator + nilai rows
         $indikatorRows = $db->query("
-            SELECT i.id_indikator, k.id_komponen, t.id_teras, i.kod_indikator, i.nama_indikator, i.impak_indikator, i.pemberat_indikator, i.peratusan_indikator, i.pemberat_indikator , i.nilai_purata, i.nilai_sisihanpiawai, 
+            SELECT i.id_indikator, k.id_komponen, t.id_teras, i.kod_indikator, i.nama_indikator, k.nama_komponen, t.nama_teras, i.impak_indikator, i.pemberat_indikator, i.peratusan_indikator, i.pemberat_indikator , i.nilai_purata, i.nilai_sisihanpiawai, 
                 p.id_pengumpulandata, CASE WHEN p.penggal_pengumpulandata = 1 THEN 'JUN' WHEN p.penggal_pengumpulandata = 2 THEN 'DEC' END AS penggal_pengumpulandata, p.tahun_pengumpulandata, pi2.nilai, 
                 ii.nilai_indeksindikator, iz.nilai_indekszscore, ia.nilai_indeksasas
             FROM indikator i
             LEFT JOIN komponen k ON k.id_komponen = i.id_komponen 
-            LEFT JOIN teras t ON t.id_teras = k.id_teras  
+            LEFT JOIN teras t ON t.id_teras = i.id_teras  
             LEFT JOIN indeks_indikator ii ON ii.id_indikator = i.id_indikator
             LEFT JOIN indeks_zscore iz ON iz.id_indikator = i.id_indikator AND ii.id_pengumpulandata = iz.id_pengumpulandata
             LEFT JOIN indeks_asas ia ON ia.id_indikator = i.id_indikator AND ia.id_pengumpulandata = iz.id_pengumpulandata AND ia.id_pengumpulandata = ii.id_pengumpulandata
@@ -96,15 +123,19 @@ class IndeksBankModel extends Model
 
             if (!isset($final[$id])) {
                 $final[$id] = [
-                    "id_indikator" => $row["id_indikator"],
-                    "kod_indikator" => $row["kod_indikator"],
-                    "nama_indikator" => $row["nama_indikator"],
-                    "impak_indikator" => $row["impak_indikator"],
-                    "pemberat_indikator" => $row["pemberat_indikator"],
-                    "nilai_indeksindikator" => $row["nilai_indeksindikator"],
-                    "nilai_purata" => $row["nilai_purata"],
-                    "nilai_sisihanpiawai" => $row["nilai_sisihanpiawai"],
-                    "nilai_pengumpulandata" => $row["nilai"],
+                    "id_indikator"           => $row["id_indikator"],
+                    "id_komponen"            => $row["id_komponen"],
+                    "id_teras"               => $row["id_teras"],
+                    "kod_indikator"          => $row["kod_indikator"],
+                    "nama_indikator"         => $row["nama_indikator"],
+                    "nama_komponen"          => $row["nama_komponen"],
+                    "nama_teras"             => $row["nama_teras"],
+                    "impak_indikator"        => $row["impak_indikator"],
+                    "pemberat_indikator"     => $row["pemberat_indikator"],
+                    "nilai_indeksindikator"  => $row["nilai_indeksindikator"],
+                    "nilai_purata"           => $row["nilai_purata"],
+                    "nilai_sisihanpiawai"    => $row["nilai_sisihanpiawai"],
+                    "nilai_pengumpulandata"  => $row["nilai"],
                 ];
             }
 
@@ -162,7 +193,6 @@ class IndeksBankModel extends Model
         else {
             return false;
         }
-        
     }
 
 }
